@@ -1,0 +1,62 @@
+\section{System Model and Problem Formulation}
+
+If the blockchain network wants to complete interoperability by supporting and using Darwinia ChainRelay, it needs to have some conditions, which mainly include two parts, support for light clients and can implement Darwinia ChainRelay protocol through smart contracts, runtime or fork.
+
+We assume that there are two blockchain networks, called the target chain (T) and the verification chain (V), and they meet an assumption that $T$ and $V$ are each safe. Among them, $T$ may be based on POW or POS, but in any case, based on a consensus principle, it can determine a consistent, valid chain, and continuously generate new legal blocks, There are ways to verify the finality of its blocks There is a $T$ on-chain light client (CR) on $V$. $V$'s verifier client can verify whether $R$ (T) already exists on T by broadcasting and executing a transaction containing the receipt $R$ (T) on $T$.
+
+Standard cross-chain verification refers to verifying what happens on another chain, including transactions, events, states, etc., but there are premise assumptions for cross-chain verification decentralized security, that is, the two chains and their consensus are all safe:
+
+\begin{assumption}
+(SPV assumption). The chain with the most PoW workload follows the network consensus and eventually is accepted by most miners.
+\end{assumption}
+
+In addition, we also need to ensure that the two chains where our relay is located can work normally:
+
+\begin{assumption}
+(Cross-chain Assumption). Both the cross-chain target chain and the chain where verification occurs are safe.
+\end{assumption}
+
+The $Assumption 2$ is intuitive, because if there's a 51\% attack on one chain, then that means existing consensus could be violated. In that case, of course, some on-chain activities confirmed by our relay will be invalid. Previous research has shown that this assumption holds if the attacker has only a small portion of all computing power. Under the SPV assumption, light clients can verify whether a particular transaction is included in the ledger. This ability is achieved by using the Merkle tree root of the block transaction of the blocks stored in the block header. A full node provides a chain of SPV certificates for light clients, including the accompanying node path of the transaction to the Merkle root node in the transaction tree.
+
+
+\subsubsection*{Verifier Model}
+The actor’s model can be simplified to only connect with two provers and one verifier. We first assume that at least one prover can be honest through the economic incentive model. At the same time, to illustrate the problem, we can assume another prover is a malicious attacker. The two provers update the state of CR by continuously submitting the block header data of T, and the verifier uses the state of CR to verify the existence of the information (state, transaction, receipt, etc.) on T.
+
+\begin{assumption}
+(one honest prover) At least there is one honest prover.
+\end{assumption}
+
+As we said before, our system can continue to run properly in the presence of a malicious relay. Then, of course, we need to define the "malicious" in the environment where this system is running.
+
+\begin{assumption}
+(economic rationality)  Any relay included in our system, if it is malicious, then it must have economic rationality.  It will not launch an attack that has no economic value.
+\end{assumption}
+
+
+Detailed explanation about technical indicator.
+
+\subsection*{Sub-linear Relay}
+
+To achieve sub-linear Relay, we need to change the original process of sequentially submitting block headers to on-demand block headers. On-demand submitter blocks also mean that new blocks can be submitted at intervals. The challenges are:
+
+\begin{itemize}
+    \item The latest submitted block header The previous block header and many previous block headers have not been submitted, but both the pre\_hash verification and the verification of the block difficulty adjustment require the previous block header.
+    
+    \item Although MMR in FlyClient is used as a Chain Commitment, it can solve the block existence and difficulty adjustment before verification. However, because of the limitation of the need to fork the protocol, it cannot be used here. We can only assume that the verification block header does not contain MMR. If MMR is required, we can only maintain and calculate the MMR value at all nodes outside the chain and submit it to Relay, but the correctness of the MMR value is also calculated by the MMR value of the previous block and the Hash increment of the previous block.
+    \item Variable difficulty MMR verification faces the same problem as Challenge 2.
+\end{itemize}
+
+In the absence of the previous block header, a correct and legal block header of a specific height H and its MMR value are given. With the latest and correct block header and its MMR value, it can be used to verify all previous blocks and transactions or events in the block. We use a verification game to verify the latest block header submitted to the on-chain Relay and in section IV we will explain its details.
+
+\subsection*{Finality}
+Using Darwinia ChainRelay for cross-chain verification, its effectiveness depends on the validity of the block’s existence proof and the transaction/receipt existence proof (Merkle proof). Among them, the validity of the block’s existence proof is related to the correctness and completeness of the on-chain verification logic. Also, the confirmation of the block header and its MMR used in the verification process is related to the validity and termination of the block.
+
+The characteristics related to block termination are called the finality of the chain. The finality of different blockchain networks is different. We mainly discuss two significant categories. One is consensus-based on POW, such as Bitcoin and Ethereum 1.0. The probabilistic finality of the mechanism can ensure that after a certain number of blocks are confirmed, the probability of termination is almost close to 1. Although the probabilistic finality cannot guarantee the absolute termination, because such a network will have the phenomenon of local chain reorganization (Reorg), its mathematical probabilistic meaning of almost the end can already guarantee sufficient security and practicality and resistance to attacks. The other is a BFT-like consensus algorithm or a hybrid algorithm that combines BFT, such as DPOS, etc. The finality of the block is to achieve a certain confirmation when the block (usually exceeds the current 2/3 validator node) After confirming), and it can reach 100\% finality, which can guarantee that this block must be on-chain.
+
+When we use Darwinia ChainRelay to verify transactions or receipts, we need to consider whether the corresponding block header (and its MMR value) used for verification has been finalized. Checking finality is also an indispensable step in verification protocol.
+
+\subsubsection*{Finality of Verification game}
+
+Another very important property is the Finality of the verification game. If this nature cannot be satisfied, it means that in the event of a dispute, the judge cannot guarantee that it will be able to give the final judgment. This important property gives our system security in the presence of a malicious relay.
+
+\textcolor{red} { we have to illustrate why our verification game holds this property}

@@ -1,0 +1,27 @@
+\captionsetup[figure]{labelformat={default},labelsep=period,font=footnotesize, name=\footnotesize{Fig.},justification=centering,singlelinecheck=false,belowskip=-0.9\normalbaselineskip}
+
+\captionsetup[table]{labelformat={default},labelsep=newline,font={sc,footnotesize},justification=centering,singlelinecheck=false}
+
+\makeatletter
+\newcommand{\linebreakand}{%
+  \baselineskip 
+  \end{@IEEEauthorhalign}
+  \hfill\mbox{}\par
+  \mbox{}\hfill\begin{@IEEEauthorhalign}
+}
+\makeatother
+
+\addto\captionsbrazil{
+  \renewcommand{\abstractname}{Abstract}
+  \renewcommand{\tablename}{TABELA}
+}
+
+\addto\captionsenglish{
+  \renewcommand{\tablename}{TABLE}
+}
+
+\newtheorem{assumption}{Assumption}
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}{Corollary}
+
+\graphicspath{ {pic/} }
