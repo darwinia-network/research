@@ -69,6 +69,7 @@ First, because the protocol of the target chain cannot be modified, the MMR valu
 
 \subsection*{Verification Game}
 
+
 \begin{figure*}
     \centering
     \includegraphics[scale=0.5]{pic/flowchart.png}
@@ -145,7 +146,7 @@ In Darwinia ChainRelay, after the prover submits a block header and MMR value be
 
 In the whole process, the design goal of the pledge punishment system is to make the verification game agreement end as soon as possible, so as to achieve the effect and equilibrium of the optimistic verification game. Therefore, when each challenge observer further advances the verification game process by submitting a new block header, a fixed value pledge is required to be locked in the protocol. After the convergence is judged, the honestly submitted pledge will be returned but the collateral submitted by the fraud challenger will be confiscated by the system. These confiscated materials can be used to reward the winner of the final verification game process, that is, the honest prover. We have previously proven that honest provers must win the verification game process.
 
-\includegraphics[scale=0.2]{pic/Verification Game Economic Model 2.jpg}
+\includegraphics[scale=0.19]{pic/Verification Game Economic Model 2.jpg}
 
 In the above verification game harvesting process, the process of submitting the pledged items for confiscation and winning back is gradually progressive (recursive). In the simplified case, there may only be two observers and opponents playing against each other, but the more complex multi-party game situation is also possible, so during the submission and challenge, the opponent relationship between the players will be recorded. The last submitter of the challenge is the opponent of the challenger, and the pledged items confiscated after the failure of the opponent will be returned to another party. The figure above shows the process of the pledge of the fraud prover being gradually harvested by the honest prover.
 
